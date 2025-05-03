@@ -1,9 +1,9 @@
 [project]
-name = "task_manager"
+name = "hexlet-code"
 version = "0.1.0"
 description = "Task manager. Hexlet project 4"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
     "django>=5.2",
     "gunicorn>=23.0.0",
