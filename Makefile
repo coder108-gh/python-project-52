@@ -21,4 +21,5 @@ migrate:
 		uv run python manage.py migrate
 
 create-su:
-		uv run puthon manage.py make_su
+		uv run python manage.py make_su
+
