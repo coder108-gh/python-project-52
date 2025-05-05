@@ -17,4 +17,8 @@ render-start:
 start:
 		uv run gunicorn task_manager.wsgi
 
+migrate:
+		uv run python manage.py migrate
 
+create-su:
+		uv run puthon manage.py make_su
