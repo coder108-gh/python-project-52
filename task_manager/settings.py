@@ -1,3 +1,4 @@
+import dj_database_url 
 import os
 from pathlib import Path
 
@@ -82,6 +83,16 @@ DATABASES = {
     }
 }
 
+
+DB_PATH = os.getenv("POSTGRES")
+
+if DB_PATH:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DB_PATH,
+            conn_max_age=600
+        )
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
