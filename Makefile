@@ -24,5 +24,5 @@ create-su:
 		uv run python manage.py make_su
 
 collectstatic:
-		uv run python manage.py collectstatic
+		uv run python manage.py collectstatic --noinput --clear
 
