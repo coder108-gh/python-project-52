@@ -26,3 +26,5 @@ create-su:
 collectstatic:
 		uv run python manage.py collectstatic --noinput --clear
 
+test:
+		uv run ./manage.py test

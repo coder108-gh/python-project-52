@@ -1,6 +1,5 @@
 {% load django_bootstrap5 %}  
-
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru-ru">
   <head>
@@ -13,6 +12,16 @@
     <div class="container wrapper flex-grow-1">
       
 {% include 'top_menu.html'  %}
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
 {% block main %}
 {% endblock %}
     <footer>

@@ -8,17 +8,11 @@
         <li class="nav-item">
           <a class="nav-link" href="/users/">Пользователи</a>
         </li>
-        
       </ul>
-      <ul class="navbar-nav">
-        
-          <li class="nav-item">
-            <a class="nav-link" href="/login/">Вход</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/users/create/">Регистрация</a>
-          </li>
-        
-      </ul>
+{% if user.is_authenticated %}      
+{% include 'auth_items.html' %}
+{% else %}
+{% include 'not_auth_items.html' %}
+{% endif %}
     </div>
-  </nav>
+</nav>
