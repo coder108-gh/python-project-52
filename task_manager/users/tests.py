@@ -7,20 +7,25 @@ User = get_user_model()
 
 
 class UserTests(TestCase):
+    fixtures = ['data.json']
 
     def setUp(self):
 
-        self.user = User.objects.create_user(
-            username='usr1',
-            password='pass1',
-            first_name='my',
-            last_name='name',
-            is_active=True
-        )
-        self.user2 = User.objects.create_user(
-            username='usr2',
-            password='psw2'
-        )
+        # self.user = User.objects.create_user(
+        #     username='usr1',
+        #     password='pass1',
+        #     first_name='my',
+        #     last_name='name',
+        #     is_active=True
+        # )
+        # self.user2 = User.objects.create_user(
+        #     username='usr2',
+        #     password='psw2'
+        # )
+
+        self.test_user = User.objects.filter(username='happylarry')[0]
+        self.test_user2 = User.objects.filter(username='harry777')[0]
+
 
     def test_create(self):
         data = {
@@ -30,7 +35,9 @@ class UserTests(TestCase):
             'first_name': 'Forest',
             'last_name': 'Gump',
         }
-        response = self.client.post(reverse('users:create_user'), data, follow=True)
+        response = self.client.post(reverse('users:create_user'),
+                                    data,
+                                    follow=True)
 
         self.assertRedirects(response, reverse('login'))
 
@@ -44,8 +51,8 @@ class UserTests(TestCase):
 
     def test_update(self):
         self.client.login(
-            username='usr1', password='pass1')
-        url = reverse('users:update_user', kwargs={'id': self.user.pk})
+            username='happylarry', password='123')
+        url = reverse('users:update_user', kwargs={'id': self.test_user.pk})
 
         data = {
             'username': 'usr1_1',
@@ -57,33 +64,33 @@ class UserTests(TestCase):
 
         response = self.client.post(url, data, follow=True)
 
-        self.user.refresh_from_db()
-        self.assertEqual(self.user.username, 'usr1_1')
-        self.assertEqual(self.user.first_name, 'UptdMy')
-        self.assertEqual(self.user.last_name, 'UptdName')
+        self.test_user.refresh_from_db()
+        self.assertEqual(self.test_user.username, 'usr1_1')
+        self.assertEqual(self.test_user.first_name, 'UptdMy')
+        self.assertEqual(self.test_user.last_name, 'UptdName')
 
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(str(messages[0]), 'Пользователь успешно изменен')
 
     def test_GET_delete(self):
-        self.client.login(username='usr1', password='pass1')
-        url = reverse('users:delete_user', kwargs={'id': self.user.pk})
+        self.client.login(username='happylarry', password='123')
+        url = reverse('users:delete_user', kwargs={'id': self.test_user.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'users/delete.html')
 
     def test_POST_delete(self):
-        self.client.login(username='usr1', password='pass1')
-        url = reverse('users:delete_user', kwargs={'id': self.user.pk})
+        self.client.login(username='happylarry', password='123')
+        url = reverse('users:delete_user', kwargs={'id': self.test_user.pk})
         response = self.client.post(url, follow=True)
-        self.assertFalse(User.objects.filter(username='existinguser').exists())
+        self.assertFalse(User.objects.filter(username='happylarry').exists())
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(str(messages[0]), 'Пользователь успешно удален')
         self.assertRedirects(response, reverse('users:users'))
 
     def test_user_invalid_permissions_update(self):
-        self.client.login(username=self.user2.username, password='psw2')
-        url = reverse('users:update_user', kwargs={'id': self.user.pk})
+        self.client.login(username='happylarry', password='123')
+        url = reverse('users:update_user', kwargs={'id': self.test_user2.pk})
         response = self.client.post(url, {
             'username': 'abcdef',
             'password1': 'def123',

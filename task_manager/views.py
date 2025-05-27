@@ -1,9 +1,5 @@
 from django.views import View
-from django.shortcuts import render  #, get_object_or_404, redirect
-
-# from django.contrib.auth import authenticate, login
-# from django.http import HttpResponse
-# from .forms import LoginForm
+from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -18,7 +14,6 @@ class IndexView(View):
 
 class TaskManagerLoginView(LoginView):
     template_name = 'registration/login.html'
-    
 
     def form_valid(self, form):
         messages.success(self.request, 'Вы залогинены')
