@@ -11,21 +11,8 @@ class UserTests(TestCase):
 
     def setUp(self):
 
-        # self.user = User.objects.create_user(
-        #     username='usr1',
-        #     password='pass1',
-        #     first_name='my',
-        #     last_name='name',
-        #     is_active=True
-        # )
-        # self.user2 = User.objects.create_user(
-        #     username='usr2',
-        #     password='psw2'
-        # )
-
         self.test_user = User.objects.filter(username='happylarry')[0]
         self.test_user2 = User.objects.filter(username='harry777')[0]
-
 
     def test_create(self):
         data = {

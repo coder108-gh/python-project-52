@@ -6,10 +6,8 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 from .forms import TaskManagerUserCreateForm as UserCreateForm
 from .forms import UpdateUser
-from django.contrib.auth.mixins import LoginRequiredMixin
 from ..mixins import AuthRequiredMessageMixin, IsOwnerMixin
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 
 
 class IndexView(View):
