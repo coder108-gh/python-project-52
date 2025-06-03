@@ -6,6 +6,7 @@ from django.views import View
 from ..mixins import AuthRequiredMessageMixin  # , IsOwnerMixin
 from .forms import LabelForm, LabelFormDelete, StatusForm, StatusFormDelete
 from .models import Label, Status
+from .consts import TasksConst
 
 
 class SimpleIndexView(AuthRequiredMessageMixin, View):
@@ -35,8 +36,8 @@ class SimpleIndexView(AuthRequiredMessageMixin, View):
 
 class StatusIndexView(SimpleIndexView):
     model = Status
-    term = 'статус'
-    terms = 'Статусы'
+    term = TasksConst.status_term
+    terms = TasksConst.status_terms
     term_url = 'tasks:create_status'
     term_update_url = 'tasks:update_status'
     term_delete_url = 'tasks:delete_status'
@@ -44,8 +45,8 @@ class StatusIndexView(SimpleIndexView):
 
 class LabelIndexView(SimpleIndexView):
     model = Label
-    term = 'метку'
-    terms = 'Метки'
+    term = TasksConst.label_term
+    terms = TasksConst.labels_terms
     term_url = 'tasks:create_label'
     term_update_url = 'tasks:update_label'
     term_delete_url = 'tasks:delete_label'
@@ -89,17 +90,17 @@ class SimpleFormCreateView(AuthRequiredMessageMixin, View):
 
 class StatusFormCreateView(SimpleFormCreateView):
     form = StatusForm
-    form_title = 'Создать статус'
-    btn_title = 'Создать'
-    succ_mess = 'Статус успешно создан'
+    form_title = TasksConst.status_create_title
+    btn_title = TasksConst.create_btn_title
+    succ_mess = TasksConst.status_succ_create
     list_url = 'tasks:status_list'
 
 
 class LabelFormCreateView(SimpleFormCreateView):
     form = LabelForm
-    form_title = 'Создать метку'
-    btn_title = 'Создать'
-    succ_mess = 'Метка успешно создана'
+    form_title = TasksConst.label_create_title
+    btn_title = TasksConst.create_btn_title
+    succ_mess = TasksConst.label_succ_create
     list_url = 'tasks:label_list'
 
 
@@ -113,6 +114,7 @@ class SimpleFormUpdateView(AuthRequiredMessageMixin, View):
 
     def get(self, request, *args, **kwargs):
         id = kwargs.get('pk')
+        
         item = get_object_or_404(self.model, id=id)
         form = self.form(instance=item)
         return render(
@@ -146,18 +148,18 @@ class SimpleFormUpdateView(AuthRequiredMessageMixin, View):
 class StatusFormUpdateView(SimpleFormUpdateView):
     model = Status
     form = StatusForm
-    form_title = 'Изменение статуса'
-    btn_title = 'Изменить'
-    succ_mess = 'Статус успешно изменен'
+    form_title = TasksConst.status_update_title
+    btn_title = TasksConst.update_btn_title
+    succ_mess = TasksConst.status_succ_update
     list_url = 'tasks:status_list'
 
 
 class LabelFormUpdateView(SimpleFormUpdateView):
     model = Label
     form = LabelForm
-    form_title = 'Изменение метки'
-    btn_title = 'Изменить'
-    succ_mess = 'Метка успешно изменена'
+    form_title = TasksConst.label_update_title
+    btn_title = TasksConst.update_btn_title
+    succ_mess = TasksConst.label_succ_update
     list_url = 'tasks:label_list'
 
 
@@ -197,18 +199,18 @@ class SimpleFormDeleteView(AuthRequiredMessageMixin, View):
 class StatusFormDeleteView(SimpleFormDeleteView):
     model = Status
     form = StatusFormDelete
-    form_title = 'Удаление статуса'
-    succ_mess = 'Статус успешно удален'
-    err_mess = 'Невозможно удалить статус, потому что он используется'
+    form_title = TasksConst.status_delete_title
+    succ_mess = TasksConst.status_succ_delete
+    err_mess = TasksConst.status_used
     list_url = 'tasks:status_list'
 
 
 class LabelFormDeleteView(SimpleFormDeleteView):
     model = Label
     form = LabelFormDelete
-    form_title = 'Удаление метки'
-    succ_mess = 'Метка успешно удалена'
-    err_mess = 'Невозможно удалить метку, потому что она используется'
+    form_title = TasksConst.delete_label_title
+    succ_mess = TasksConst.label_succ_delete
+    err_mess = TasksConst.label_used
     list_url = 'tasks:label_list'
 
 
