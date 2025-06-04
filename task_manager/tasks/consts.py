@@ -19,6 +19,7 @@ class TasksConst:
     label_succ_create = 'Метка успешно создана'
     label_succ_update = 'Метка успешно изменена'
     label_succ_delete = 'Метка успешно удалена'
+    label_exist = 'Label с таким Имя уже существует.'
     label_used = 'Невозможно удалить метку, '\
         'потому что она используется'
 
