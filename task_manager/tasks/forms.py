@@ -1,5 +1,7 @@
 from django.forms import ModelForm
-from .models import Status, Label, Task
+
+from .consts import TasksConst
+from .models import Label, Status, Task
 
 
 class StatusForm(ModelForm):
@@ -7,13 +9,13 @@ class StatusForm(ModelForm):
         model = Status
         fields = ['name']
         labels = {
-            'name': 'Имя',
+            'name': TasksConst.frm_label_name,
         }
         error_messages = {
             'name': {
-                'max_length': 'Название слишком длинное!',
-                'required': 'Это поле обязательно для заполнения',
-                'unique': 'Task status с таким Имя уже существует.'
+                'max_length': TasksConst.frm_name_too_long,
+                'required': TasksConst.frm_required_field,
+                'unique': TasksConst.frm_uniq_status
             },
         }
 
@@ -30,13 +32,13 @@ class LabelForm(ModelForm):
         model = Label
         fields = ['name']
         labels = {
-            'name': 'Имя',
+            'name':  TasksConst.frm_label_name,
         }
         error_messages = {
             'name': {
-                'max_length': 'Название слишком длинное!',
-                'required': 'Это поле обязательно для заполнения',
-                'unique': 'Label с таким Имя уже существует.'
+                'max_length': TasksConst.frm_name_too_long,
+                'required': TasksConst.frm_required_field,
+                'unique': TasksConst.frm_uniq_label
             },
         }
 
@@ -51,4 +53,18 @@ class LabelFormDelete(ModelForm):
 class TaskForm(ModelForm):
     class Meta:
         model = Task
-        fields = ['name', 'description', 'status'] #  ???
+        fields = ['name', 'description', 'status', 'executor', 'label']
+        labels = {
+            'name': TasksConst.frm_label_name,
+            'description': TasksConst.frm_label_descr, 
+            'status': TasksConst.frm_label_status, 
+            'executor': TasksConst.frm_label_assigned_to,
+            'label': TasksConst.labels_terms
+        }
+        error_messages = {
+            'name': {
+                'max_length': TasksConst.frm_name_too_long,
+                'required': TasksConst.frm_required_field,
+                'unique': TasksConst.frm_unic_task
+            },
+        }

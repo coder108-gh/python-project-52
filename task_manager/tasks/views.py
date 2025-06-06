@@ -4,9 +4,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
 from ..mixins import AuthRequiredMessageMixin  # , IsOwnerMixin
-from .forms import LabelForm, LabelFormDelete, StatusForm, StatusFormDelete
-from .models import Label, Status
 from .consts import TasksConst
+from .forms import (LabelForm, LabelFormDelete, StatusForm, StatusFormDelete,
+                    TaskForm)
+from .models import Label, Status, Task
 
 
 class SimpleIndexView(AuthRequiredMessageMixin, View):
@@ -17,12 +18,13 @@ class SimpleIndexView(AuthRequiredMessageMixin, View):
     term_url = ''
     term_update_url = ''
     term_delete_url = ''
+    page_url = 'tasks/index_simple.html' 
 
     def get(self, request, *args, **kwargs):
         items = list(self.model.objects.all())
         return render(
             request,
-            'tasks/index_simple.html',
+            self.page_url,
             context={
                 'items': items,
                 'term': self.term,
@@ -52,6 +54,16 @@ class LabelIndexView(SimpleIndexView):
     term_delete_url = 'tasks:delete_label'
 
 
+class TaskIndexView(SimpleIndexView):
+    model = Task
+    term = TasksConst.task_term
+    terms = TasksConst.tasks_terms
+    term_url = 'tasks:create_task'
+    term_update_url = 'tasks:update_status'
+    term_delete_url = 'tasks:delete_status'
+    page_url = 'tasks/index_tasks.html'
+
+
 class SimpleFormCreateView(AuthRequiredMessageMixin, View):
 
     form = None
@@ -61,7 +73,7 @@ class SimpleFormCreateView(AuthRequiredMessageMixin, View):
     list_url = ''
 
     def get(self, request, *args, **kwargs):
-        form = self.form()  #StatusForm()
+        form = self.form()
         return render(
             request,
             'tasks/create_simple.html',
@@ -214,12 +226,115 @@ class LabelFormDeleteView(SimpleFormDeleteView):
     list_url = 'tasks:label_list'
 
 
+class TaskFormCreateView(SimpleFormCreateView):
+    form = TaskForm
+    form_title = TasksConst.task_create_title
+    btn_title = TasksConst.create_btn_title
+    succ_mess = TasksConst.task_succ_create
+    list_url = 'tasks:task_list'
 
-# GET /tasks/ — страница со списком всех задач
-# GET /tasks/create/ — страница создания задачи
-# POST /tasks/create/ — создание новой задачи
+    def post(self, request, *args, **kwargs):
+        form = self.form(request.POST)
+        if form.is_valid():
+            task_obj = form.save(commit=False)
+            task_obj.creator_id = request.user.id
+            task_obj.save()
+            task_obj.label.set(form.cleaned_data['label'])
+            form.save_m2m()
+            messages.success(self.request, self.succ_mess)
+            return redirect(self.list_url)
+        return render(
+            request,
+            'tasks/create_simple.html',
+            {
+                'form': form,
+                'form_title': self.form_title,
+                'btn_title': self.btn_title
+            })
+
+
+class TaskFormUpdateView(SimpleFormUpdateView):
+    model = Task
+    form = TaskForm
+    form_title = TasksConst.task_update_title
+    btn_title = TasksConst.update_btn_title
+    succ_mess = TasksConst.task_succ_update
+    list_url = 'tasks:task_list'
+
+    # def get(self, request, *args, **kwargs):
+    #     id = kwargs.get('pk')
+        
+    #     item = get_object_or_404(self.model, id=id)
+    #     form = self.form(instance=item)
+    #     return render(
+    #         request,
+    #         'tasks/create_task.html',
+    #         {
+    #             'form': form,
+    #             'form_title': self.form_title,
+    #             'btn_title': self.btn_title
+    #         })
+
+    def post(self, request, *args, **kwargs):
+        id = kwargs.get('pk')
+        item = get_object_or_404(self.model, id=id)
+        form = self.form(request.POST, instance=item)
+        if form.is_valid():
+            task_obj = form.save(commit=False)
+            task_obj.creator_id = request.user.id
+            task_obj.save()
+            task_obj.label.set(form.cleaned_data['label'])
+            form.save_m2m()
+            messages.success(self.request, self.succ_mess)
+            return redirect(self.list_url)
+
+        return render(
+            request,
+            'tasks/create_simple.html',
+            {
+                'form': form,
+                'form_title': self.form_title,
+                'btn_title': self.btn_title
+            })
+
+
+
+    # def post(self, request, *args, **kwargs):
+    #     form = self.form(request.POST)
+    #     if form.is_valid():
+    #         task_obj = form.save(commit=False)
+    #         task_obj.creator_id = request.user.id
+    #         task_obj.save()
+    #         task_obj.label.set(form.cleaned_data['label'])
+    #         form.save_m2m()
+    #         messages.success(self.request, self.succ_mess)
+    #         return redirect(self.list_url)
+    
+
+
+
+# форма
+# views
+# url
+# test
+# interface
+
+
+# GET /tasks/ — страница со списком всех задач -  добавить три ссылки ред. изм. удал.
 # GET /tasks/<int:pk>/update/ — страница редактирования задачи
 # POST /tasks/<int:pk>/update/ — обновление задачи
 # GET /tasks/<int:pk>/delete/ — страница удаления задачи
 # POST /tasks/<int:pk>/delete/ — удаление задачи
 # GET /tasks/<int:pk>/ — страница просмотра задачи
+
+
+
+# Напишите тесты для CRUD задач
+# Реализуйте CRUD задач
+# Подключите flash-сообщения, как в демонстрационном проекте
+# Сделайте так, чтобы добавлять, редактировать и просматривать задачи могли только залогиненные пользователи
+# Сделайте так, чтобы удалять задачи мог только их создатель
+# Реализуйте возможность добавлять метки при создании и изменении задач
+# Добавьте в основное меню ссылку на список меток
+# Сделайте так, чтобы только залогиненные пользователи могли добавлять, редактировать и просматривать метки
+# Сделайте так, чтобы пользователь не мог удалить метку, если она связана с задачами

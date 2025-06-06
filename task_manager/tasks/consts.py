@@ -22,9 +22,23 @@ class TasksConst:
     label_exist = 'Label с таким Имя уже существует.'
     label_used = 'Невозможно удалить метку, '\
         'потому что она используется'
-
-
-
     
+    task_term = 'задачу'
+    tasks_terms = 'Задачи'
+    task_create_title = 'Создать задачу'
+    task_update_title = 'Изменение задачи'
+    task_succ_create = 'Задача успешно создана'
+    task_succ_update = 'Задача успешно изменена'
+
     create_btn_title = 'Создать'
     update_btn_title = 'Изменить'
+    frm_label_name = 'Имя'
+    frm_label_descr = 'Описание'
+    frm_label_status = 'Статус'
+    frm_label_assigned_to = 'Исполнитель'
+
+    frm_name_too_long = 'Название слишком длинное!'
+    frm_required_field = 'Это поле обязательно для заполнения'
+    frm_uniq_status = 'Task status с таким Имя уже существует.'
+    frm_uniq_label = 'Label с таким Имя уже существует.'
+    frm_unic_task = 'Task с таким Имя уже существует.'

@@ -13,6 +13,8 @@ class UserTests(TestCase):
 
         self.test_user = User.objects.filter(username='happylarry')[0]
         self.test_user2 = User.objects.filter(username='harry777')[0]
+        self.test_user3 = User.objects.filter(username='testuser')[0]
+
 
     def test_create(self):
         data = {
@@ -67,10 +69,10 @@ class UserTests(TestCase):
         self.assertTemplateUsed(response, 'users/delete.html')
 
     def test_POST_delete(self):
-        self.client.login(username='happylarry', password='123')
-        url = reverse('users:delete_user', kwargs={'id': self.test_user.pk})
+        self.client.login(username='testuser', password='123')
+        url = reverse('users:delete_user', kwargs={'id': self.test_user3.pk})
         response = self.client.post(url, follow=True)
-        self.assertFalse(User.objects.filter(username='happylarry').exists())
+        self.assertFalse(User.objects.filter(username='testuser').exists())
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(str(messages[0]), 'Пользователь успешно удален')
         self.assertRedirects(response, reverse('users:users'))
@@ -89,3 +91,4 @@ class UserTests(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(str(messages[0]), 'У вас нет прав\
                         для изменения другого пользователя.')
+
