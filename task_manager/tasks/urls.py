@@ -6,7 +6,7 @@ from task_manager.tasks.views import (LabelFormCreateView, LabelFormDeleteView,
                                       StatusFormDeleteView,
                                       StatusFormUpdateView, StatusIndexView,
                                       TaskFormCreateView, TaskFormUpdateView,
-                                      TaskIndexView)
+                                      TaskIndexView, TaskView, TaskFormDeleteView)
 
 app_name = 'tasks'
 
@@ -51,12 +51,16 @@ urlpatterns = [
         TaskFormUpdateView.as_view(),
         name='update_task'
     ),
-
+    path(
+        'tasks/<int:pk>/delete',
+        TaskFormDeleteView.as_view(),
+        name='delete_task'
+    ),
+    path(
+        'tasks/<int:pk>/',
+        TaskView.as_view(),
+        name='task_detail'
+    ),
 
 
 ]
-
-
-# GET /tasks/<int:pk>/delete/ — страница удаления задачи
-# POST /tasks/<int:pk>/delete/ — удаление задачи
-# GET /tasks/<int:pk>/ — страница просмотра задачи

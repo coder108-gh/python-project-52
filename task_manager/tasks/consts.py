@@ -27,8 +27,12 @@ class TasksConst:
     tasks_terms = 'Задачи'
     task_create_title = 'Создать задачу'
     task_update_title = 'Изменение задачи'
+    task_delete_title = 'Удаление задачи'
     task_succ_create = 'Задача успешно создана'
     task_succ_update = 'Задача успешно изменена'
+    task_succ_delete = 'Задача успешно удалена'
+    task_error_delete = 'Задачу может удалить только ее автор'
+
 
     create_btn_title = 'Создать'
     update_btn_title = 'Изменить'
@@ -42,3 +46,6 @@ class TasksConst:
     frm_uniq_status = 'Task status с таким Имя уже существует.'
     frm_uniq_label = 'Label с таким Имя уже существует.'
     frm_unic_task = 'Task с таким Имя уже существует.'
+
+
+

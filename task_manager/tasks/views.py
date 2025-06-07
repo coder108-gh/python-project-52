@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.db.models import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views import View
 
-from ..mixins import AuthRequiredMessageMixin  # , IsOwnerMixin
+from ..mixins import AuthRequiredMessageMixin
 from .consts import TasksConst
 from .forms import (LabelForm, LabelFormDelete, StatusForm, StatusFormDelete,
-                    TaskForm)
+                    TaskForm, TaskFormDelete)
 from .models import Label, Status, Task
 
 
@@ -52,16 +53,6 @@ class LabelIndexView(SimpleIndexView):
     term_url = 'tasks:create_label'
     term_update_url = 'tasks:update_label'
     term_delete_url = 'tasks:delete_label'
-
-
-class TaskIndexView(SimpleIndexView):
-    model = Task
-    term = TasksConst.task_term
-    terms = TasksConst.tasks_terms
-    term_url = 'tasks:create_task'
-    term_update_url = 'tasks:update_status'
-    term_delete_url = 'tasks:delete_status'
-    page_url = 'tasks/index_tasks.html'
 
 
 class SimpleFormCreateView(AuthRequiredMessageMixin, View):
@@ -182,6 +173,9 @@ class SimpleFormDeleteView(AuthRequiredMessageMixin, View):
     succ_mess = ''
     err_mess = ''
     list_url = ''
+    not_owner_mess = ''
+    is_owner_only = False
+
 
     def get(self, request, *args, **kwargs):
         id = kwargs.get('pk')
@@ -199,10 +193,16 @@ class SimpleFormDeleteView(AuthRequiredMessageMixin, View):
     def post(self, request, *args, **kwargs):
         id = kwargs.get('pk')
         item = get_object_or_404(self.model, id=id)
+        
+        if self.is_owner_only and item.creator != request.user:
+            messages.error(self.request, self.not_owner_mess)
+            return redirect(reverse('tasks:task_list')) 
+
         if item:
             try:
                 item.delete()
                 messages.success(self.request, self.succ_mess)
+
             except ProtectedError:
                 messages.error(self.request, self.err_mess)
         return redirect(self.list_url)
@@ -261,20 +261,6 @@ class TaskFormUpdateView(SimpleFormUpdateView):
     succ_mess = TasksConst.task_succ_update
     list_url = 'tasks:task_list'
 
-    # def get(self, request, *args, **kwargs):
-    #     id = kwargs.get('pk')
-        
-    #     item = get_object_or_404(self.model, id=id)
-    #     form = self.form(instance=item)
-    #     return render(
-    #         request,
-    #         'tasks/create_task.html',
-    #         {
-    #             'form': form,
-    #             'form_title': self.form_title,
-    #             'btn_title': self.btn_title
-    #         })
-
     def post(self, request, *args, **kwargs):
         id = kwargs.get('pk')
         item = get_object_or_404(self.model, id=id)
@@ -298,43 +284,44 @@ class TaskFormUpdateView(SimpleFormUpdateView):
             })
 
 
-
-    # def post(self, request, *args, **kwargs):
-    #     form = self.form(request.POST)
-    #     if form.is_valid():
-    #         task_obj = form.save(commit=False)
-    #         task_obj.creator_id = request.user.id
-    #         task_obj.save()
-    #         task_obj.label.set(form.cleaned_data['label'])
-    #         form.save_m2m()
-    #         messages.success(self.request, self.succ_mess)
-    #         return redirect(self.list_url)
-    
+class TaskFormDeleteView(SimpleFormDeleteView):
+    model = Task
+    form = TaskFormDelete
+    form_title = TasksConst.task_delete_title
+    succ_mess = TasksConst.task_succ_delete
+    list_url = 'tasks:task_list'
+    is_owner_only = True
+    not_owner_mess = TasksConst.task_error_delete
 
 
 
-# форма
-# views
-# url
-# test
-# interface
+class TaskIndexView(SimpleIndexView):
+    model = Task
+    term = TasksConst.task_term
+    terms = TasksConst.tasks_terms
+    term_url = 'tasks:create_task'
+    term_update_url = 'tasks:update_task'
+    term_delete_url = 'tasks:delete_task'
+    page_url = 'tasks/index_tasks.html'
 
 
-# GET /tasks/ — страница со списком всех задач -  добавить три ссылки ред. изм. удал.
-# GET /tasks/<int:pk>/update/ — страница редактирования задачи
-# POST /tasks/<int:pk>/update/ — обновление задачи
-# GET /tasks/<int:pk>/delete/ — страница удаления задачи
-# POST /tasks/<int:pk>/delete/ — удаление задачи
-# GET /tasks/<int:pk>/ — страница просмотра задачи
+class TaskView(AuthRequiredMessageMixin, View):
 
+    model = Task
+    update_url = 'tasks:update_task'
+    delete_url = 'tasks:delete_task'
+    page_url = 'tasks/task_card.html'
 
+    def get(self, request, *args, **kwargs):
+        id = kwargs.get('pk')
 
-# Напишите тесты для CRUD задач
-# Реализуйте CRUD задач
-# Подключите flash-сообщения, как в демонстрационном проекте
-# Сделайте так, чтобы добавлять, редактировать и просматривать задачи могли только залогиненные пользователи
-# Сделайте так, чтобы удалять задачи мог только их создатель
-# Реализуйте возможность добавлять метки при создании и изменении задач
-# Добавьте в основное меню ссылку на список меток
-# Сделайте так, чтобы только залогиненные пользователи могли добавлять, редактировать и просматривать метки
-# Сделайте так, чтобы пользователь не мог удалить метку, если она связана с задачами
+        item = get_object_or_404(self.model, id=id)
+        return render(
+            request,
+            self.page_url,
+            {
+                'item': item,
+                'labels': item.label.all(),
+                'update_url': self.update_url,
+                'delete_url': self.delete_url
+            })

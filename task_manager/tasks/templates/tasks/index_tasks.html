@@ -21,7 +21,7 @@
 {% for item in items %}
           <tr>
             <td>{{ item.id }}</td>
-            <td>{{ item.name }}</td>
+            <td><a href="{% url 'tasks:task_detail' pk=item.id %}">{{ item.name }}</a></td>
             <td>{{ item.status }}</td>
             <td>{{ item.creator }}</td>
             <td>{{ item.executor }}</td>

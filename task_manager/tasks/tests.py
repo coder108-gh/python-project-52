@@ -194,7 +194,6 @@ class LabelTest(TestCase):
         self.assertEqual(str(messages[0]), TasksConst.label_succ_update)
 
     def test_delete(self):
-
         url = reverse('tasks:delete_label', kwargs={'pk': self.label_id})
         url2 = reverse(
             'tasks:delete_label',
@@ -240,6 +239,7 @@ class TaskTest(TestCase):
         self.test_name = 'совсем зависло'
         self.exist_name = 'в работе'
         self.user_data = {'username': 'happylarry', 'password': '123'}
+        self.user_no_owner = {'username': 'harry777', 'password': '123'}
         self.status_data = {'name': self.test_name}
         self.exists_status_data = {'name': self.exist_name}
 
@@ -294,9 +294,11 @@ class TaskTest(TestCase):
 
     def test_update(self):
 
+        self.client.login(**self.user_data)
+
         data = {
-            'name': self.test_name+'abc',
-            'description': self.test_descr+'cde',
+            'name': self.test_name,
+            'description': self.test_descr,
             'executor': self.other_user_id,
             'status': self.other_status_id
         }
@@ -304,14 +306,28 @@ class TaskTest(TestCase):
         response = self.client.post(reverse('tasks:create_task'),
                                     data,
                                     follow=True)
+        self.client.logout()
+
+        data = {
+            'name': self.test_name+'abc',
+            'description': self.test_descr+'cde',
+            'executor': self.other_user_id,
+            'status': self.other_status_id
+        }
+
+        response = self.client.post(
+            reverse('tasks:update_task', kwargs={'pk': self.task_id}),
+            data,
+            follow=True)
 
         self.assertRedirects(response, reverse('login'))
 
         self.client.login(**self.user_data)
 
-        response = self.client.post(reverse('tasks:update_task', kwargs={'pk': self.task_id}),
-                                    data,
-                                    follow=True)
+        response = self.client.post(
+            reverse('tasks:update_task', kwargs={'pk': self.task_id}),
+            data,
+            follow=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, TasksConst.task_succ_update)
@@ -320,12 +336,79 @@ class TaskTest(TestCase):
         self.assertTrue(messages)
         self.assertEqual(str(messages[0]), TasksConst.task_succ_update)
 
-        self.assertTrue(Task.objects.filter(name=self.test_name+'abc').exists())
+        self.assertTrue(
+            Task.objects.filter(name=self.test_name+'abc').exists())
 
-        response = self.client.post(reverse('tasks:update_task', kwargs={'pk': self.other_task_id}),
-                                    data,
-                                    follow=True)
+        response = self.client.post(
+            reverse('tasks:update_task', kwargs={'pk': self.other_task_id}),
+            data,
+            follow=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, TasksConst.frm_unic_task)
 
+    def test_detail(self):
+        response = self.client.get(
+            reverse('tasks:task_detail',
+                    kwargs={'pk': self.task_id}), follow=True)
+
+        self.assertRedirects(response, reverse('login'))
+
+        self.client.login(**self.user_data)
+
+        response = self.client.get(
+            reverse('tasks:task_detail',
+                    kwargs={'pk': self.task_id}), follow=True)
+
+        task = Task.objects.filter(id=self.task_id).first()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, task.name)
+
+    def test_delete(self):
+        url = reverse('tasks:delete_task', kwargs={'pk': self.task_id})
+
+        response = self.client.post(url, follow=True)
+
+        self.assertRedirects(response, reverse('login'))
+
+        self.client.login(**self.user_data)
+
+        data = {
+            'name': self.test_name,
+            'description': self.test_descr,
+            'executor': self.other_user_id,
+            'status': self.other_status_id
+        }
+
+        response = self.client.post(reverse('tasks:create_task'),
+                                    data,
+                                    follow=True)
+        task_id = Task.objects.filter(name=self.test_name).first().id
+        url = reverse('tasks:delete_task', kwargs={'pk': task_id})
+
+        self.client.logout()
+
+        self.client.login(**self.user_no_owner)
+
+        response = self.client.post(url, follow=True)
+
+        self.assertRedirects(response, reverse('tasks:task_list'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(messages)
+        self.assertEqual(str(messages[0]), TasksConst.task_error_delete)
+
+        self.client.logout()
+
+        self.client.login(**self.user_data)
+
+        response = self.client.post(url, follow=True)
+
+        self.assertRedirects(response, reverse('tasks:task_list'))
+
+        tmp = list(Task.objects.filter(pk=task_id))
+        self.assertEqual(len(tmp), 0)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(messages)
+        self.assertEqual(str(messages[0]), TasksConst.task_succ_delete)

@@ -68,3 +68,10 @@ class TaskForm(ModelForm):
                 'unique': TasksConst.frm_unic_task
             },
         }
+
+
+class TaskFormDelete(ModelForm):
+    class Meta:
+        model = Label
+        fields = []
+        labels = {}
