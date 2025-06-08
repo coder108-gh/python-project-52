@@ -11,6 +11,7 @@ from .forms import (LabelForm, LabelFormDelete, StatusForm, StatusFormDelete,
 from .models import Label, Status, Task
 from .filters import TaskFilter
 
+
 class SimpleIndexView(AuthRequiredMessageMixin, View):
 
     model = None
@@ -311,7 +312,7 @@ class TaskIndexView(SimpleIndexView):
             request,
             self.page_url,
             context={
-                'filter':filter,
+                'filter': filter,
                 'items': filtered_queryset,
                 'term': self.term,
                 'terms': self.terms,
@@ -320,13 +321,6 @@ class TaskIndexView(SimpleIndexView):
                 'term_delete_url': self.term_delete_url,
             },
         )
-
-
-
-
-
-
-
 
 
 class TaskView(AuthRequiredMessageMixin, View):
