@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
+{% load django_bootstrap5 %}
 {% block main %}
 <h1 class="my-4">
     {{terms}}
 </h1>
 <a class="btn btn-primary mb-3" href="{% url term_url  %}">Создать {{term}}</a>
+
+<form method="get">
+    {% bootstrap_form filter.form %}
+    <button type="submit" class="btn btn-primary">Фильтровать</button>
+</form>
+
 {% if items %}
     <table class="table table-striped">
       <thead>

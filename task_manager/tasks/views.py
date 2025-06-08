@@ -9,7 +9,7 @@ from .consts import TasksConst
 from .forms import (LabelForm, LabelFormDelete, StatusForm, StatusFormDelete,
                     TaskForm, TaskFormDelete)
 from .models import Label, Status, Task
-
+from .filters import TaskFilter
 
 class SimpleIndexView(AuthRequiredMessageMixin, View):
 
@@ -176,7 +176,6 @@ class SimpleFormDeleteView(AuthRequiredMessageMixin, View):
     not_owner_mess = ''
     is_owner_only = False
 
-
     def get(self, request, *args, **kwargs):
         id = kwargs.get('pk')
         item = get_object_or_404(self.model, id=id)
@@ -294,7 +293,6 @@ class TaskFormDeleteView(SimpleFormDeleteView):
     not_owner_mess = TasksConst.task_error_delete
 
 
-
 class TaskIndexView(SimpleIndexView):
     model = Task
     term = TasksConst.task_term
@@ -303,6 +301,32 @@ class TaskIndexView(SimpleIndexView):
     term_update_url = 'tasks:update_task'
     term_delete_url = 'tasks:delete_task'
     page_url = 'tasks/index_tasks.html'
+
+    def get(self, request, *args, **kwargs):
+
+        queryset = self.model.objects.all()
+        filter = TaskFilter(request.GET, queryset=queryset, request=request)
+        filtered_queryset = filter.qs
+        return render(
+            request,
+            self.page_url,
+            context={
+                'filter':filter,
+                'items': filtered_queryset,
+                'term': self.term,
+                'terms': self.terms,
+                'term_url': self.term_url,
+                'term_update_url': self.term_update_url,
+                'term_delete_url': self.term_delete_url,
+            },
+        )
+
+
+
+
+
+
+
 
 
 class TaskView(AuthRequiredMessageMixin, View):
