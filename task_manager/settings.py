@@ -30,6 +30,7 @@ except ModuleNotFoundError:
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
@@ -67,7 +68,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+   'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
+   
 ]
+
+ 
 
 ROOT_URLCONF = 'task_manager.urls'
 
@@ -167,4 +172,14 @@ STATICFILES_DIRS = [
 
 if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATICFILES_STORAGE =\
+        'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+ROLLBAR_TOKEN = os.getenv("ROLLBAR_TOKEN")
+
+ROLLBAR = {
+    'access_token': ROLLBAR_TOKEN,
+    'environment': 'development' if DEBUG else 'production',
+    'code_version': '1.0',
+    'root': BASE_DIR,
+}

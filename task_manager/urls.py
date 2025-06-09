@@ -10,4 +10,5 @@ urlpatterns = [
     path('logout/', views.TaskManagerLogoutView.as_view(), name='logout'),
     path('users/', include('task_manager.users.urls', namespace='users')),
     path('admin/', admin.site.urls),
+    path('rollbar_test/', views.rollbar_test)
 ]
