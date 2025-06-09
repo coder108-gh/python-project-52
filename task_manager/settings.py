@@ -1,4 +1,4 @@
-import dj_database_url 
+import dj_database_url
 import os
 from pathlib import Path
 
@@ -72,7 +72,6 @@ MIDDLEWARE = [
    
 ]
 
- 
 
 ROOT_URLCONF = 'task_manager.urls'
 

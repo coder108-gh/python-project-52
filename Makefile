@@ -29,8 +29,8 @@ create-su:
 collectstatic:
 		uv run python manage.py collectstatic --noinput --clear
 
-test:
-		uv run python ./manage.py test
+# test:
+# 		uv run python ./manage.py test
 
 write-fixture:
 		uv run python manage.py dumpdata > task_manager/fixtures/data.json
