@@ -6,10 +6,12 @@ from django.urls import reverse_lazy
 
 from django.http import HttpResponse
 
+
 def rollbar_test(request):
     a = None
     a.hello() # Creating an error with an invalid line of code
     return HttpResponse("Hello, world. You're at the pollapp index.")
+
 
 class IndexView(View):
 
