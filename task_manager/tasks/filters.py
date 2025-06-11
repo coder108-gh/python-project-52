@@ -21,7 +21,7 @@ class TaskFilter(django_filters.FilterSet):
     )
 
     my_tasks = django_filters.BooleanFilter(
-        label='Только мои задачи',
+        label='Только свои задачи',
         method='filter_my_tasks',
         widget=forms.CheckboxInput,
     )
@@ -38,15 +38,3 @@ class TaskFilter(django_filters.FilterSet):
             'executor': ['exact'],
             'label': ['exact']
         }
-
-
-
-# class TaskFilter(django_filters.FilterSet):
-#     class Meta:
-#         model = Task
-#         fields = {
-#             'status': ['exact'],
-#             'executor': ['exact'],
-#             'label': ['exact']
-#         }
-

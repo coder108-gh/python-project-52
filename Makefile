@@ -24,6 +24,7 @@ migrations:
 		uv run python manage.py makemigrations
 
 migrate:
+		uv run python manage.py makemigrations
 		uv run python manage.py migrate
 
 create-su:

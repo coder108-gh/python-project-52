@@ -15,7 +15,6 @@ class UserTests(TestCase):
         self.test_user2 = User.objects.filter(username='harry777')[0]
         self.test_user3 = User.objects.filter(username='testuser')[0]
 
-
     def test_create(self):
         data = {
             'username': 'frstgmp',
