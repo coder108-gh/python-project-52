@@ -3,13 +3,16 @@ from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import messages
 from django.urls import reverse_lazy
+from django.contrib.auth import get_user_model
 
 from django.http import HttpResponse
+
+users = get_user_model()
 
 
 def rollbar_test(request):
     a = None
-    a.hello() # Creating an error with an invalid line of code
+    a.hello()
     return HttpResponse("Hello, world. You're at the pollapp index.")
 
 

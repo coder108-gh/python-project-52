@@ -1,9 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
-
 
 from .consts import TasksConst
 from .models import Label, Status, Task

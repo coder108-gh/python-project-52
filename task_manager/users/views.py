@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.models import User
+from .models import User
 from django.db.models import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy

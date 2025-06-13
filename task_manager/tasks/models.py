@@ -1,8 +1,6 @@
 from django.db import models
-from ..users.models import UserProxy
 
-
-User = UserProxy
+from ..users.models import User
 
 
 class TaskBaseModel(models.Model):
