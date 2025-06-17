@@ -2,5 +2,4 @@
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.local/bin/env
 
-make install && make migrate && make collectstatic && make create-su  
-
+make install && make collectstatic && make migrate
