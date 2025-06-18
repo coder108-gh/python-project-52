@@ -1,56 +1,49 @@
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
-from task_manager.labels.models import Label
-from task_manager.statuses.models import Status
-from task_manager.users.models import User
+from ..users.models import User
 
 
-class Task(models.Model):
-    """Represents a task with optional executor, labels, and description."""
-    name = models.CharField(
-        max_length=255,
-        blank=False,
-        unique=True,
-        verbose_name=_('Name'),
-        error_messages={
-            'unique': _('This task with this name already exists. '
-                        'Please choose another name.'),
-        }
-    )
-    description = models.TextField(
-        blank=True,
-        verbose_name=_('Description'),
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.PROTECT,
-        verbose_name=_('Author'),
-        related_name='author',
-    )
-    status = models.ForeignKey(
-        Status,
-        on_delete=models.PROTECT,
-        verbose_name=_('Status'),
-    )
-    executor = models.ForeignKey(
-        User,
-        blank=True,
-        null=True,
-        on_delete=models.PROTECT,
-        verbose_name=_('Executor'),
-        related_name='executor',
-    )
-    labels = models.ManyToManyField(
-        Label,
-        blank=True,
-        verbose_name=_('Labels'),
-    )
+class TaskBaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     class Meta:
-        verbose_name = _('Task')
-        verbose_name_plural = _('Tasks')
+        abstract = True
+
+
+class Status(TaskBaseModel):
+    name = models.CharField(max_length=100, null=False, unique=True)
+
+
+class Label(TaskBaseModel):
+    name = models.CharField(max_length=100, null=False, unique=True)
+
+
+class Task(TaskBaseModel):
+    name = models.CharField(max_length=250, null=False, unique=True)
+    description = models.TextField()
+    status = models.ForeignKey(Status, on_delete=models.PROTECT)
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='tasks_created'
+        )
+    executor = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='tasks_executed',
+        null=True,
+        blank=True
+        )
+    label = models.ManyToManyField(Label, through='TaskLabel', blank=True)
+
+
+class TaskLabel(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    label = models.ForeignKey(Label, on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = ('task', 'label')
