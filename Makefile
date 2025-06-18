@@ -14,6 +14,10 @@ testcov:
 	uv run coverage run --source='.' manage.py test
 	uv run coverage xml
 
+test-coverage:
+	uv run pytest --cov=gendiff --cov-report=xml:coverage.xml
+
+
 makemessages:
 	uv run django-admin makemessages --ignore="static" --ignore=".env"  -l ru
 
