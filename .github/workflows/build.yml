@@ -28,6 +28,7 @@ jobs:
             DATABASE_URL: "sqlite:///:memory"
             SECRET_KEY: "any_key"
             DJANGO_SETTINGS_MODULE: "task_manager.settings.test"
+            PYTHON_PATH: "${{ github.workspace }}"
         run: |
           make test-coverage
 
