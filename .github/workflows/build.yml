@@ -15,7 +15,7 @@ jobs:
           python-version: '3.13'
       - name: Install dependencies
         run: |
-          pip install uv pytest
+          pip install uv pytest pytest-cov
           make install
       - name: Run linter and pytest
         env:
