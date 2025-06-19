@@ -15,7 +15,7 @@ testcov:
 	uv run coverage xml
 
 test-coverage:
-	pytest --cov=task_manager --cov-report=xml:coverage.xml
+	python -m pytest --cov=task_manager --cov-report=xml:coverage.xml
 
 
 makemessages:
