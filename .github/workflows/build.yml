@@ -30,7 +30,7 @@ jobs:
             DJANGO_SETTINGS_MODULE: "task_manager.settings.test"
             PYTHON_PATH: "${{ github.workspace }}"
         run: |
-          make test-coverage
+          python -m pytest --cov=task_manager --cov-report=xml:coverage.xml
 
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v5
