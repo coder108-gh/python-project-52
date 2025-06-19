@@ -24,6 +24,9 @@ jobs:
         run: |
           make check
       - name: Run test coverage
+        env:
+            DATABASE_URL: "sqlite:///:memory"
+            SECRET_KEY: "any_key"
         run: |
           make test-coverage
 
