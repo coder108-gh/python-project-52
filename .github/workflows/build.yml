@@ -12,12 +12,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
       - name: Install dependencies
         run: |
           pip install uv
           make install
       - name: Run linter and pytest
+        env:
+            DATABASE_URL: "sqlite:///:memory"
+            SECRET_KEY: "any_key"
         run: |
           make check
       - name: Run test coverage
