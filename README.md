@@ -8,13 +8,26 @@
 
 Task Manager is an application designed to task tracking.
 
+A task manager with full CRUD operations for managing:
+- Users
+- Tasks
+- Statuses
+- Labels
+
 
 ## Deploy: [Link on Render.com](https://python-project-52-w6ey.onrender.com)
 
-#### Requirements and Tools:
 
-|     Tools      | Version |
-|:--------------:|:-------:|
-|     Python     | ^3.10.0 |
-|     Django     |  ^5.0   |
+## Key Features
+- User authentication and authorization
+- Task filtering by statuses, assignees and labels
+- Deployment on Render.com with PostgreSQL
+
+## Technology Stack
+
+**Backend**: Django 5
+
+**Frontend**: Bootstrap 5, Django Templates  
+
+**Database**: PostgreSQL (prod), SQLite (dev)  
 
