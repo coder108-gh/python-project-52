@@ -1,5 +1,9 @@
+dev:
+		uv run python manage.py runserver
+
 install:
-	uv sync
+		uv sync
+
 
 migrate:
 	uv run python3 manage.py migrate
@@ -32,6 +36,10 @@ build:
 
 render-start:
 	gunicorn task_manager.wsgi
+
+start-prod:
+		uv run gunicorn task_manager.wsgi
+
 
 lint:
 	uv run ruff check task_manager
